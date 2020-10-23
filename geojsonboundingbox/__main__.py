@@ -21,16 +21,30 @@ if __name__ == '__main__':
     x_max_all = None
     y_max_all = None
 
-    for i, feature in enumerate(geojson['coordinates']):
+    if geojson.get('features'):
+        features = geojson['features']
+    else:
+        features = [{'geometry': geojson}]
+    for i, feature in enumerate(features):
 
-        if isinstance(feature[0][0], list):
-            feature = feature.pop()
+        coordinates = feature.get('geometry', {}).get('coordinates')
+
+        if not coordinates:
+            print('No coordinates found in geometry provided')
+            continue
+
+        if isinstance(coordinates[0], list):
+            coordinates = coordinates.pop()
+
+        if isinstance(coordinates[0][0], list):
+            coordinates = coordinates.pop()
+
         x_min_feature = None
         y_min_feature = None
         x_max_feature = None
         y_max_feature = None
 
-        for coord_pair in feature:
+        for coord_pair in coordinates:
             if x_min_feature is None or coord_pair[0] < x_min_feature:
                 x_min_feature = coord_pair[0]
 
