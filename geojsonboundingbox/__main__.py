@@ -27,51 +27,50 @@ if __name__ == '__main__':
         features = [{'geometry': geojson}]
     for i, feature in enumerate(features):
 
-        coordinates = feature.get('geometry', {}).get('coordinates')
+        parts = feature.get('geometry', {}).get('coordinates')
 
-        if not coordinates:
+        if not parts:
             print('No coordinates found in geometry provided')
             continue
-
-        if isinstance(coordinates[0], list):
-            coordinates = coordinates.pop()
-
-        if isinstance(coordinates[0][0], list):
-            coordinates = coordinates.pop()
 
         x_min_feature = None
         y_min_feature = None
         x_max_feature = None
         y_max_feature = None
 
-        for coord_pair in coordinates:
-            if x_min_feature is None or coord_pair[0] < x_min_feature:
-                x_min_feature = coord_pair[0]
+        for j, part in enumerate(parts):
 
-            if y_min_feature is None or coord_pair[1] < y_min_feature:
-                y_min_feature = coord_pair[1]
+            if isinstance(part[0][0], list):
+                part = part.pop()
 
-            if x_max_feature is None or coord_pair[0] > x_max_feature:
-                x_max_feature = coord_pair[0]
+            for coord_pair in part:
+                if x_min_feature is None or coord_pair[0] < x_min_feature:
+                    x_min_feature = coord_pair[0]
 
-            if y_max_feature is None or coord_pair[1] > y_max_feature:
-                y_max_feature = coord_pair[1]
+                if y_min_feature is None or coord_pair[1] < y_min_feature:
+                    y_min_feature = coord_pair[1]
 
-        print('Feature {} bounding box:\n{}\n\n'.format(i+1, coords_to_json_bb(x_min_feature, y_min_feature,
-                                                                             x_max_feature, y_max_feature)))
+                if x_max_feature is None or coord_pair[0] > x_max_feature:
+                    x_max_feature = coord_pair[0]
 
-        if x_min_all is None or x_min_feature < x_min_all:
-            x_min_all = x_min_feature
+                if y_max_feature is None or coord_pair[1] > y_max_feature:
+                    y_max_feature = coord_pair[1]
 
-        if y_min_all is None or y_min_feature < y_min_all:
-            y_min_all = y_min_feature
+            print('Feature {} bounding box:\n{}\n'.format(j+1, coords_to_json_bb(x_min_feature, y_min_feature,
+                                                                                 x_max_feature, y_max_feature)))
 
-        if x_max_all is None or x_max_feature > x_max_all:
-            x_max_all = x_max_feature
+            if x_min_all is None or x_min_feature < x_min_all:
+                x_min_all = x_min_feature
 
-        if y_max_all is None or y_max_feature > y_max_all:
-            y_max_all = y_max_feature
+            if y_min_all is None or y_min_feature < y_min_all:
+                y_min_all = y_min_feature
+
+            if x_max_all is None or x_max_feature > x_max_all:
+                x_max_all = x_max_feature
+
+            if y_max_all is None or y_max_feature > y_max_all:
+                y_max_all = y_max_feature
 
 
-    print('Total bounding box:\n{}\n\n'.format(coords_to_json_bb(x_min_all, y_min_all,
+    print('Total bounding box:\n{}'.format(coords_to_json_bb(x_min_all, y_min_all,
                                                                              x_max_all, y_max_all)))

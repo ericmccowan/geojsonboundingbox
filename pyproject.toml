@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "geojsonboundingbox"
-version = "0.1.3"
+version = "0.1.4"
 description = "Prints out the bounding box of a geojson input file"
 authors = ["Eric McCowan <eric.mccowan@servian.com>"]
 license = "MIT"
